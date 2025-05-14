@@ -14,7 +14,7 @@ import sys
 from typing import Dict, List
 
 # Instrument Imports #
-from nupylab.instruments.heater.eurotherm2400 import Eurotherm2400 as Heater
+from nupylab.instruments.heater.eurotherm3216 import Eurotherm3216 as Heater
 from nupylab.instruments.mfc.bronkhorst_mfc import BronkhorstMFC as MFC
 ######################
 from nupylab.utilities import list_resources, nupylab_procedure, nupylab_window

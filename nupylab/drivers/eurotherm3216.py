@@ -42,7 +42,7 @@ class Eurotherm3216(minimalmodbus.Instrument):
     """
 
     def __init__(
-            self, port: str, clientaddress: int, baudrate: int = 9600,
+            self, port: str, clientaddress: int, baudrate: int = 19200,
             timeout: float = 1, **kwargs
     ) -> None:
         """Connect to Eurotherm.

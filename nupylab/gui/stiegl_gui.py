@@ -46,7 +46,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         "MFC O2 Flow (cc/min)",
         "MFC CO2 Flow (cc/min)",
         "MFC CO Flow (cc/min)",
-        "MFC N2 Flow (cc/min)",
+        # "MFC N2 Flow (cc/min)",
         "MFC CH4 Flow (cc/min)",
         "MFC Ar Flow (cc/min)",
     ]
@@ -66,7 +66,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
     mfc_O2_setpoint = FloatParameter("MFC O2 Setpoint", units="sccm")
     mfc_CO2_setpoint = FloatParameter("MFC CO2 Setpoint", units="sccm")
     mfc_CO_setpoint = FloatParameter("MFC CO Setpoint", units="sccm")
-    mfc_N2_setpoint = FloatParameter("MFC N2 Setpoint", units="sccm")
+    # mfc_N2_setpoint = FloatParameter("MFC N2 Setpoint", units="sccm")
     mfc_CH4_setpoint = FloatParameter("MFC CH4 Setpoint", units="sccm")
     mfc_Ar_setpoint = FloatParameter("MFC Ar Setpoint", units="sccm")
 
@@ -78,7 +78,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         "MFC O2 [sccm]": "mfc_O2_setpoint",
         "MFC CO2 [sccm]": "mfc_CO2_setpoint",
         "MFC CO [sccm]": "mfc_CO_setpoint",
-        "MFC N2 [sccm]": "mfc_N2_setpoint",
+        # "MFC N2 [sccm]": "mfc_N2_setpoint",
         "MFC CH4 [sccm]": "mfc_CH4_setpoint",
         "MFC Ar [sccm]": "mfc_Ar_setpoint",
 
@@ -93,7 +93,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         "MFC O2 Flow (cc/min)",
         "MFC CO2 Flow (cc/min)",
         "MFC CO Flow (cc/min)",
-        "MFC N2 Flow (cc/min)",
+        # "MFC N2 Flow (cc/min)",
         "MFC CH4 Flow (cc/min)",
         "MFC Ar Flow (cc/min)",
     ]
@@ -129,7 +129,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
                     "O2",
                     "CO2",
                     "CO",
-                    "N2",
+                    # "N2",
                     "CH4",
                     "Ar",
                 ),
@@ -138,7 +138,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
                     "MFC O2 Flow (cc/min)",
                     "MFC CO2 Flow (cc/min)",
                     "MFC CO Flow (cc/min)",
-                    "MFC N2 Flow (cc/min)",
+                    # "MFC N2 Flow (cc/min)",
                     "MFC CH4 Flow (cc/min)",
                     "MFC Ar Flow (cc/min)",
                 ),
@@ -153,7 +153,7 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
                 self.mfc_O2_setpoint,
                 self.mfc_CO2_setpoint,
                 self.mfc_CO_setpoint,
-                self.mfc_N2_setpoint,
+                # self.mfc_N2_setpoint,
                 self.mfc_CH4_setpoint,
                 self.mfc_Ar_setpoint,
             )

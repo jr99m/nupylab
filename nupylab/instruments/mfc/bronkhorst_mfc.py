@@ -130,7 +130,7 @@ class BronkhorstMFC(NupylabInstrument):
         """
         flow_rates: List[float] = []
         with self.lock:
-            for instrument, in self.mfcs:
+            for instrument in self.mfcs:
                 flow_rates.append(instrument.readParameter(FlowBus.FMEASURE))
         return list(
             DataTuple(label, flow_rate)

@@ -81,7 +81,7 @@ class BronkhorstMFC(NupylabInstrument):
 
         self.mfcs = [mfcs[gas] for gas in self.gas_label]
         self._connected = True
-        self._ranges = [ins.readParameter(FlowBus.CAPACITY) for ins in mfcs]
+        self._ranges = [ins.readParameter(FlowBus.CAPACITY) for ins in self.mfcs]
 
     
     def set_parameters(self, setpoints: Sequence[float]) -> None:

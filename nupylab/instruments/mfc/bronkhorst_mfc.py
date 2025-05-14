@@ -53,7 +53,8 @@ class BronkhorstMFC(NupylabInstrument):
             ValueError if lengths of addresses, mfc_classes, and data_label
             do not match.
         """
-
+        if "COM" not in port:
+            port = port.replace("ASRL", "COM").replace("::INSTR", "")
         self.port = port
         self.name = name
         super().__init__(data_label, name)

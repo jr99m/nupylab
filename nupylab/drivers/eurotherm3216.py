@@ -253,6 +253,57 @@ class Eurotherm3216(minimalmodbus.Instrument):
         ramp_dict = {'mins': 0, 'hours': 1, 'secs': 2}
         self.write_register(531, ramp_dict[val.casefold()])
 
+    @property
+    def timer_threshold(self) -> int:
+        """
+        To set the maximum deviation between SP and PV before the timer starts.
+
+        - 0 -> OFF
+        - 1-3000
+        """
+        val = self.read_register(327)
+        return val
+
+    @timer_threshold.setter
+    def timer_threshold(self, val: int):
+        self.write_register(327, val)
+
+    @property
+    def dwell_timer(self) -> float:
+        """Requested Timer Duration"""
+        val = self.read_time(324)
+        return val
+    
+    @property
+    def time_elapsed(self) -> float:
+        """Elapsed Time"""
+        val = self.read_time(325)
+        return val
+    
+    @property
+    def time_remaining(self) -> float:
+        """Time Remaining"""
+        val = self.read_time(326)
+        return val
+    
+    @property
+    def servo(self) -> float:
+        """
+        ‘Servo’ Mode (programmer option only)
+
+        - 0 – Start first ramp from current Working Setpoint. Program must be restarted after power failure
+        - 1 - Start first ramp from current PV (temperature). Program must be restarted after power failure
+        - 2 - Start first ramp from current Working Setpoint. Program will continue to run after power failure
+        - 3 - Start first ramp from current PV (temperature). Program must be restarted after power failure
+        """
+        val = self.read_register(329)
+        return val
+    
+    @servo.setter
+    def servo(self, val: int) -> float:
+        val = self.write_register(329, val)
+        return val
+
     class Segment:
         """A class for each (target, ramp rate, dwell time) segment."""
 

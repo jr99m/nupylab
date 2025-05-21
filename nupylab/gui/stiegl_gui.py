@@ -12,10 +12,12 @@ python s4_gui.py
 
 import sys
 from typing import Dict, List
+from time import monotonic
 
 # Instrument Imports #
 from nupylab.instruments.heater.eurotherm3216 import Eurotherm3216 as Heater
 from nupylab.instruments.mfc.bronkhorst_mfc import BronkhorstMFC as MFC
+
 ######################
 from nupylab.utilities import list_resources, nupylab_procedure, nupylab_window
 from pymeasure.display.Qt import QtWidgets
@@ -58,6 +60,9 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         "Eurotherm Address", minimum=1, maximum=254, step=1, default=1
     )
     mfc_port = ListParameter("Bronkhorst Port", choices=resources)
+    furnace_dwell_thresh = IntegerParameter(
+        "Dwell Timer Threshold", minimum=0, maximum=3000, step=1, default=0
+    )
 
     target_temperature = FloatParameter("Target Temperature", units="C")
     ramp_rate = FloatParameter("Ramp Rate", units="C/min")
@@ -81,7 +86,6 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         # "MFC N2 [sccm]": "mfc_N2_setpoint",
         "MFC CH4 [sccm]": "mfc_CH4_setpoint",
         "MFC Ar [sccm]": "mfc_Ar_setpoint",
-
     }
 
     # Entries in axes must have matches in procedure DATA_COLUMNS.
@@ -89,6 +93,8 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
     X_AXIS: List[str] = ["Time (s)"]
     Y_AXIS: List[str] = [
         "Furnace Temperature (degC)",
+        "Furnace Setpoint (degC)",
+        "Furnace Output (%)",
         "MFC H2 Flow (cc/min)",
         "MFC O2 Flow (cc/min)",
         "MFC CO2 Flow (cc/min)",
@@ -98,12 +104,12 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         "MFC Ar Flow (cc/min)",
     ]
 
-
     # Inputs must match name of selected procedure parameters
     INPUTS: List[str] = [
         "record_time",
         "furnace_port",
         "furnace_address",
+        "furnace_dwell_thresh",
         "mfc_port",
     ]
 
@@ -117,10 +123,19 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
         `active_instruments` attributes.
         """
         if self.previous_procedure is not None:
-            furnace, mfc, = self.previous_procedure.instruments
+            (
+                furnace,
+                mfc,
+            ) = self.previous_procedure.instruments
         else:
             furnace = Heater(
-                self.furnace_port, self.furnace_address, "Furnace Temperature (degC)"
+                self.furnace_port,
+                self.furnace_address,
+                [
+                    "Furnace Temperature (degC)",
+                    "Furnace Setpoint (degC)",
+                    "Furnace Output (%)",
+                ],
             )
             mfc = MFC(
                 self.mfc_port,
@@ -146,7 +161,13 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
 
         self.instruments = (furnace, mfc)
         self.active_instruments = [furnace, mfc]
+        self._start_t
+
+        # Setting Furnace Parameters
+        furnace.eurotherm.timer_threshold = self.furnace_dwell_thresh
         furnace.set_parameters(self.target_temperature, self.ramp_rate, self.dwell_time)
+
+        # Setting MFC Parameters
         mfc.set_parameters(
             (
                 self.mfc_H2_setpoint,
@@ -158,6 +179,20 @@ class StieglProcedure(nupylab_procedure.NupylabProcedure):
                 self.mfc_Ar_setpoint,
             )
         )
+    
+    @property
+    def progress(self) -> float:
+        furnace = self.instruments[0]
+        with furnace.lock:
+            temp = furnace.eurotherm.working_setpoint
+        
+        remaining = (self.target_temperature - temp) / self.ramp_rate + self.dwell_time
+        elapsed = (monotonic() - self._start_time)
+        return elapsed / (remaining + elapsed) * 100
+
+
+
+
 
 
 def main(*args):

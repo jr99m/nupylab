@@ -16,7 +16,7 @@ class Eurotherm3216(NupylabInstrument):
     """
 
     def __init__(
-        self, port: str, address: int, data_label: str, name: str = "Eurotherm3216"
+        self, port: str, address: int, data_label: list[str], name: str = "Eurotherm3216"
     ) -> None:
         """Initialize Eurotherm data label, name, and connection parameters.
 
@@ -28,6 +28,9 @@ class Eurotherm3216(NupylabInstrument):
             data_label: label for DataTuple. :meth:`get_data` returns temperature, and
                 corresponding label should match entry in DATA_COLUMNS of calling
                 procedure class.
+                1. current temperature
+                2. working setpoint
+                3. working output
             name: name of instrument.
         """
         self.eurotherm = None
@@ -81,16 +84,23 @@ class Eurotherm3216(NupylabInstrument):
             self.eurotherm.program_status = "run"
             self._parameters = None
 
-    def get_data(self) -> DataTuple:
+    def get_data(self) -> list[DataTuple]:
         """Read heater temperature.
 
         Returns:
-            DataTuple with current temperature.
+            DataTuple with 
+            1. current temperature
+            2. working setpoint
+            3. working output
         """
         with self.lock:
             temperature: float = self.eurotherm.process_value
+            working_setpoint: float = self.eurotherm.working_setpoint
+            working_output: float = self.eurotherm.working_output
             self._finished = self.eurotherm.program_status in ("reset", "end")
-        return DataTuple(self.data_label, temperature)
+        
+        data = [temperature, working_setpoint, working_output]
+        return [DataTuple(l, v) for l, v in zip(self.data_label, data)]
 
     @property
     def finished(self) -> bool:
